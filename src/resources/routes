@@ -5,7 +5,7 @@
 
 # An example controller showing a sample home page
 # Post endpoints
-GET     /posts                          controllers.restController.post.PostController.index()
+GET     /posts                          controllers.restController.post.PostController.getAllPostWithPagination(page: Int ?= 1, size: Int ?= 10)
 
 # User endpoints
 GET     /users                          controllers.restController.user.UserController.index()
