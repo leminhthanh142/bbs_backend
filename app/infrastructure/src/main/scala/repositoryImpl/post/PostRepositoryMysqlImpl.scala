@@ -5,6 +5,7 @@ import domain.src.main.scala.repository.post.PostRepository
 import scalikejdbc.sqls
 import skinny.Pagination
 import skinny.orm.Alias
+import valueObject.PostId
 
 class PostRepositoryMysqlImpl extends PostRepository {
   val post: Alias[Post] = PostDao.defaultAlias
@@ -17,4 +18,6 @@ class PostRepositoryMysqlImpl extends PostRepository {
   override def getPostCount: Long = {
     PostDao.countBy(sqls.isNull(post.deletedAt))
   }
+
+  override def getPostById(id: Int): Option[Post] = PostDao.findById(PostId(id))
 }

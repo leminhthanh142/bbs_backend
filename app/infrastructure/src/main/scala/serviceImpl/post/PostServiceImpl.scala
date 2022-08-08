@@ -11,4 +11,6 @@ class PostServiceImpl @Inject()(postRepository: PostRepository) extends PostServ
   override def getAllPostWithPagination(page: Int, size: Int): List[Post] = postRepository.getAllPostWithPagination(page, size)
 
   override def getPostCount: Long = postRepository.getPostCount
+
+  override def getPostById(id: Int): Option[Post] = postRepository.getPostById(id)
 }

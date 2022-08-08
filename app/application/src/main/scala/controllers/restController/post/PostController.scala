@@ -9,6 +9,8 @@ import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import javax.inject.{Inject, Singleton}
 import scala.util.{Failure, Success, Try}
 import helper.jsonFormat.post.ListPostJsonFormat._
+import helper.jsonFormat.post.PostJsonFormat._
+
 @Singleton
 class PostController @Inject()(val controllerComponents: ControllerComponents, postService: PostService) extends BaseController {
   def getAllPostWithPagination(page: Int, size: Int): Action[AnyContent] = Action {
@@ -20,6 +22,16 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
         count = listPost.length,
         total = totalPost
       )
+    }
+    match {
+      case Success(value) => Ok(Json.toJson(value))
+      case Failure(exception) => BadRequest(exception.toString)
+    }
+  }
+
+  def getPostById(id: Int): Action[AnyContent] = Action {
+    Try {
+      postService.getPostById(id)
     }
     match {
       case Success(value) => Ok(Json.toJson(value))
