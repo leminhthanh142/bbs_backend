@@ -2,6 +2,7 @@ package infrastructure.src.main.scala.repositoryImpl.post
 import dao.post.PostDao
 import domain.src.main.scala.model.post.Post
 import domain.src.main.scala.repository.post.PostRepository
+import dto.post.PostCreateParams
 import scalikejdbc.sqls
 import skinny.Pagination
 import skinny.orm.Alias
@@ -20,4 +21,14 @@ class PostRepositoryMysqlImpl extends PostRepository {
   }
 
   override def getPostById(id: Int): Option[Post] = PostDao.findById(PostId(id))
+
+  override def createPost(postCreateParams: PostCreateParams): PostId = {
+    PostDao.createWithAttributes(
+      Symbol("title") -> postCreateParams.title,
+      Symbol("content") -> postCreateParams.content,
+      Symbol("previewContent") -> postCreateParams.previewContent,
+      Symbol("author") -> postCreateParams.author,
+      Symbol("thumbnail") -> postCreateParams.thumbnail,
+    )
+  }
 }

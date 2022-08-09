@@ -1,8 +1,8 @@
 package helper.jsonFormat.post
 
-import dto.post.ListPostResponse
 import play.api.libs.json.{Json, Writes}
 import PostJsonFormat._
+import dto.post.ListPostResponse
 
 object ListPostJsonFormat {
 

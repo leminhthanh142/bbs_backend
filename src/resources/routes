@@ -5,11 +5,13 @@
 
 # An example controller showing a sample home page
 # Post endpoints
-GET     /api/posts                          controllers.restController.post.PostController.getAllPostWithPagination(page: Int ?= 1, size: Int ?= 10)
-GET     /api/posts/:id                      controllers.restController.post.PostController.getPostById(id: Int)
+GET     /api/posts                              controllers.restController.post.PostController.getAllPostWithPagination(page: Int ?= 1, size: Int ?= 10)
+GET     /api/posts/thumbnails/:thumbnail        controllers.restController.post.PostController.getThumbnail(thumbnail: String)
+POST    /api/posts                              controllers.restController.post.PostController.createPost()
+GET     /api/posts/:id                          controllers.restController.post.PostController.getPostById(id: Int)
 
 # User endpoints
-GET     /api/users                          controllers.restController.user.UserController.index()
+GET     /api/users                              controllers.restController.user.UserController.index()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)

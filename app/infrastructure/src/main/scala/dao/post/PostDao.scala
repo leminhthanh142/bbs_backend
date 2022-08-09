@@ -1,6 +1,7 @@
 package dao.post
 
 import domain.src.main.scala.model.post.Post
+import org.joda.time.DateTime
 import scalikejdbc.WrappedResultSet
 import skinny.orm.{Alias, SkinnyCRUDMapperWithId}
 import valueObject.PostId
@@ -17,8 +18,8 @@ object PostDao extends SkinnyCRUDMapperWithId[PostId, Post] {
       previewContent = rs.get(n.previewContent),
       author = rs.get(n.author),
       thumbnail = rs.get(n.thumbnail),
-      createdAt = rs.get(n.createdAt),
-      updatedAt = rs.get(n.updatedAt),
+      createdAt = DateTime.now(),
+      updatedAt = DateTime.now(),
       deletedAt = rs.get(n.deletedAt)
     )
   }
