@@ -2,6 +2,7 @@ package controllers.restController.post
 
 import domain.src.main.scala.model.post.Post
 import domain.src.main.scala.services.post.PostService
+import dto.apiResult.MissingParameter
 import dto.post.{ListPostResponse, PostCreateParams}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
@@ -46,25 +47,32 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
   def createPost(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Try {
       val postCreateParams = request.body.asMultipartFormData.get
-      var thumbnail = ""
-      postCreateParams.file("thumbnail").map {
+      val thumbnail = postCreateParams.file("thumbnail").map {
         picture =>
-          thumbnail = Paths.get(picture.filename).getFileName.toString
-          picture.ref.copyTo(new File(s"public/images/$thumbnail"), replace = true)
-      }
+          val imageName = Paths.get(picture.filename).getFileName.toString
+          picture.ref.copyTo(new File(s"public/images/$imageName"), replace = true)
+      }.head.getFileName.toString
+
+      val title = postCreateParams.dataParts("title").head
+      val content = postCreateParams.dataParts("content").head
+      val previewContent = textTruncate(postCreateParams.dataParts("content").head, 50)
+      val author = postCreateParams.dataParts("author").head
 
       val postParams = PostCreateParams(
-        title = postCreateParams.dataParts("title").mkString,
-        content = postCreateParams.dataParts("content").mkString,
-        previewContent = textTruncate(postCreateParams.dataParts("content").mkString, 50),
-        author = postCreateParams.dataParts("author").mkString,
+        title,
+        content,
+        previewContent,
+        author,
         thumbnail
       )
 
       postService.createPost(postParams)
     }
     match {
-      case Failure(exception) => BadRequest(exception.toString)
+      case Failure(exception) => exception match {
+        case error: MissingParameter => BadRequest(error.message)
+        case _ => InternalServerError("Something went wrong, please try again later!")
+      }
       case Success(_) => Created("Success")
     }
   }
