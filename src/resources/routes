@@ -9,6 +9,7 @@ GET     /api/posts                              controllers.restController.post.
 GET     /api/posts/thumbnails/:thumbnail        controllers.restController.post.PostController.getThumbnail(thumbnail: String)
 POST    /api/posts                              controllers.restController.post.PostController.createPost()
 GET     /api/posts/:id                          controllers.restController.post.PostController.getPostById(id: Int)
+POST    /api/thumbnails                         controllers.restController.post.PostController.uploadThumbnail()
 
 # User endpoints
 GET     /api/users                              controllers.restController.user.UserController.index()

@@ -26,7 +26,6 @@ class PostRepositoryMysqlImpl extends PostRepository {
     PostDao.createWithAttributes(
       Symbol("title") -> postCreateParams.title,
       Symbol("content") -> postCreateParams.content,
-      Symbol("previewContent") -> postCreateParams.previewContent,
       Symbol("author") -> postCreateParams.author,
       Symbol("thumbnail") -> postCreateParams.thumbnail,
     )

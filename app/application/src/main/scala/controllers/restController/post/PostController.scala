@@ -11,13 +11,13 @@ import javax.inject.{Inject, Singleton}
 import scala.util.{Failure, Success, Try}
 import helper.jsonFormat.post.ListPostJsonFormat._
 import helper.jsonFormat.post.PostJsonFormat._
-import utils.StringUtils.textTruncate
 
 import java.io.File
 import java.nio.file.Paths
 
 @Singleton
 class PostController @Inject()(val controllerComponents: ControllerComponents, postService: PostService) extends BaseController {
+
   def getAllPostWithPagination(page: Int, size: Int): Action[AnyContent] = Action {
     Try {
       val listPost: List[Post] = postService.getAllPostWithPagination(page, size)
@@ -49,19 +49,17 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
       val postCreateParams = request.body.asMultipartFormData.get
       val thumbnail = postCreateParams.file("thumbnail").map {
         picture =>
-          val imageName = Paths.get(picture.filename).getFileName.toString
+          val imageName = Paths.get(picture.filename).getFileName.toString.replaceAll(" ", "")
           picture.ref.copyTo(new File(s"public/images/$imageName"), replace = true)
       }.head.getFileName.toString
 
       val title = postCreateParams.dataParts("title").head
       val content = postCreateParams.dataParts("content").head
-      val previewContent = textTruncate(postCreateParams.dataParts("content").head, 50)
       val author = postCreateParams.dataParts("author").head
 
       val postParams = PostCreateParams(
         title,
         content,
-        previewContent,
         author,
         thumbnail
       )
@@ -79,5 +77,21 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
 
   def getThumbnail(thumbnail: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Ok.sendFile(new File(s"public/images/$thumbnail"))(defaultExecutionContext, fileMimeTypes)
+  }
+
+  def uploadThumbnail(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    val postCreateParams = request.body.asMultipartFormData.get
+    val thumbnail = postCreateParams.file("image").map {
+      picture =>
+        val imageName = Paths.get(picture.filename).getFileName.toString.replaceAll(" ", "")
+        picture.ref.copyTo(new File(s"public/images/$imageName"), replace = true)
+    }.head.getFileName.toString
+
+    Ok(Json.toJson(Json.obj(
+      "success" -> 1,
+      "file" -> Json.obj(
+        "url" -> s"http://localhost:9000/api/posts/thumbnails/$thumbnail"
+      )))
+    )
   }
 }

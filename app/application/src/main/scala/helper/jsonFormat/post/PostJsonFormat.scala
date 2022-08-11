@@ -10,7 +10,6 @@ object PostJsonFormat {
       "id" -> post.id.value,
       "title" -> post.title,
       "content" -> post.content,
-      "previewContent" -> post.previewContent,
       "author" -> post.author,
       "thumbnail" -> post.thumbnail,
       "createdAt" -> timeFormat(post.createdAt),

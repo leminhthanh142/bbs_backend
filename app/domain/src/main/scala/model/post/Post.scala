@@ -7,7 +7,6 @@ case class Post(
                  id: PostId,
                  title: String,
                  content: String,
-                 previewContent: String,
                  author: String,
                  thumbnail: String,
                  createdAt: DateTime,
