@@ -7,7 +7,7 @@ import skinny.orm.{Alias, SkinnyCRUDMapperWithId}
 import valueObject.PostId
 
 object PostDao extends SkinnyCRUDMapperWithId[PostId, Post] {
-  override lazy val tableName = "post_test"
+  override lazy val tableName = "post"
   override def defaultAlias: Alias[Post] = createAlias("post")
 
   override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[Post]): Post = {

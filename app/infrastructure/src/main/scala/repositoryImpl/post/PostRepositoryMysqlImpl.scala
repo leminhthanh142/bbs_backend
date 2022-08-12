@@ -14,6 +14,7 @@ class PostRepositoryMysqlImpl extends PostRepository {
     PostDao
       .where(sqls.isNull(post.deletedAt))
       .paginate(Pagination.page(page).per(size))
+      .orderBy(post.createdAt.desc)
       .apply()
 
   override def getPostCount: Long = {
