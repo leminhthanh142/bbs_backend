@@ -41,7 +41,7 @@ lazy val domain = (project in file("app/domain"))
 lazy val application = (project in file("app/application"))
   .enablePlugins(PlayScala)
   .disablePlugins(PlayLayoutPlugin)
-  .dependsOn(domain)
+  .dependsOn(domain, infrastructure)
 
 lazy val infrastructure = (project in file("app/infrastructure"))
   .enablePlugins(PlayScala)
