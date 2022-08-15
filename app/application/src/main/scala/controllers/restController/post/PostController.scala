@@ -1,16 +1,17 @@
 package controllers.restController.post
 
-import domain.src.main.scala.model.post.Post
 import domain.src.main.scala.services.post.PostService
 import dto.apiResult.MissingParameter
-import dto.post.{ListPostResponse, PostCreateParams}
+import dto.post.PostCreateParams
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
 
 import javax.inject.{Inject, Singleton}
 import scala.util.{Failure, Success, Try}
-import helper.jsonFormat.post.ListPostJsonFormat._
 import helper.jsonFormat.post.PostJsonFormat._
+import helper.jsonFormat.post.PagedJsonFormat._
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
 
 import java.io.File
 import java.nio.file.Paths
@@ -20,13 +21,7 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
 
   def getAllPostWithPagination(page: Int, size: Int): Action[AnyContent] = Action {
     Try {
-      val listPost: List[Post] = postService.getAllPostWithPagination(page, size)
-      val totalPost: Long = postService.getPostCount
-      ListPostResponse(
-        posts = listPost,
-        count = listPost.length,
-        total = totalPost
-      )
+      postService.getAllPostWithPagination(page, size)
     }
     match {
       case Success(value) => Ok(Json.toJson(value))
@@ -47,11 +42,9 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
   def createPost(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Try {
       val postCreateParams = request.body.asMultipartFormData.get
-      val thumbnail = postCreateParams.file("thumbnail").map {
-        picture =>
-          val imageName = Paths.get(picture.filename).getFileName.toString.replaceAll(" ", "")
-          picture.ref.copyTo(new File(s"public/images/$imageName"), replace = true)
-      }.head.getFileName.toString
+      val thumbnail = postCreateParams.file("thumbnail")
+        .map(uploadThumbnail)
+        .getOrElse(throw MissingParameter("Missing thumbnail"))
 
       val title = postCreateParams.dataParts("title").head
       val content = postCreateParams.dataParts("content").head
@@ -75,22 +68,22 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
     }
   }
 
-  def getThumbnail(thumbnail: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    Ok.sendFile(new File(s"public/images/$thumbnail"))(defaultExecutionContext, fileMimeTypes)
+  def uploadThumbnail(file: FilePart[TemporaryFile]): String = {
+    val imageName = Paths.get(file.filename).getFileName.toString
+    file.ref.copyTo(new File(s"public/images/$imageName"), replace = true)
+    imageName
   }
 
-  def uploadThumbnail(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+  def uploadThumbnailEditorJs(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val postCreateParams = request.body.asMultipartFormData.get
-    val thumbnail = postCreateParams.file("image").map {
-      picture =>
-        val imageName = Paths.get(picture.filename).getFileName.toString.replaceAll(" ", "")
-        picture.ref.copyTo(new File(s"public/images/$imageName"), replace = true)
-    }.head.getFileName.toString
+    val thumbnail = postCreateParams.file("image")
+      .map(uploadThumbnail)
+      .getOrElse(throw MissingParameter("Missing thumbnail"))
 
     Ok(Json.toJson(Json.obj(
       "success" -> 1,
       "file" -> Json.obj(
-        "url" -> s"http://localhost:9000/api/posts/thumbnails/$thumbnail"
+        "url" -> s"http://localhost:9000/api/thumbnails/$thumbnail"
       )))
     )
   }
