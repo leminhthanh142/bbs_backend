@@ -31,6 +31,7 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(commonSettings)
+  .aggregate(application, domain, infrastructure)
   .dependsOn(application, domain, infrastructure)
 
 lazy val domain = (project in file("app/domain"))
@@ -46,3 +47,4 @@ lazy val infrastructure = (project in file("app/infrastructure"))
   .enablePlugins(PlayScala)
   .disablePlugins(PlayLayoutPlugin)
   .dependsOn(domain)
+  .settings(commonSettings)
