@@ -1,5 +1,8 @@
 package domain.src.main.scala.services.user
 
-trait UserService {
+import dto.user.UserDto
+import valueObject.UserId
 
+trait UserService {
+  def save(userDto: UserDto): UserId
 }

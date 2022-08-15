@@ -1,5 +1,10 @@
 package domain.src.main.scala.repository.user
 
-trait UserRepository {
+import domain.src.main.scala.model.user.User
+import dto.user.UserDto
+import valueObject.UserId
 
+trait UserRepository {
+  def findByEmail(email: String): Option[User]
+  def save(userDto: UserDto): UserId
 }
