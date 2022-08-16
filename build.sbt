@@ -28,6 +28,12 @@ lazy val commonSettings = Seq(
   )
 )
 
+lazy val applicationSettings = Seq(
+  libraryDependencies ++= Seq(
+    "net.sf.opencsv" % "opencsv" % "2.3"
+  )
+)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(commonSettings)
@@ -42,6 +48,7 @@ lazy val application = (project in file("app/application"))
   .enablePlugins(PlayScala)
   .disablePlugins(PlayLayoutPlugin)
   .dependsOn(domain, infrastructure)
+  .settings(applicationSettings)
 
 lazy val infrastructure = (project in file("app/infrastructure"))
   .enablePlugins(PlayScala)

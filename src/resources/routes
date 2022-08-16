@@ -14,6 +14,9 @@ POST        /api/thumbnails                         controllers.restController.p
 # User endpoints
 POST        /api/users/sign_up                      controllers.restController.user.UserController.createUser()
 
+# Export csv
+GET         /api/posts/:id/export_csv               controllers.restController.file.CSVController.makeCsv(id: Int)
+
 # Auth endpoints
 POST        /api/auth/sign_in                       controllers.restController.auth.AuthController.signIn()
 DELETE      /api/auth/sign_out                      controllers.restController.auth.AuthController.signOut()
