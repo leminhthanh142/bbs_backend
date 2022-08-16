@@ -3,7 +3,7 @@ import dao.user.UserDao
 import domain.src.main.scala.model.user.User
 import domain.src.main.scala.repository.user.UserRepository
 import dto.user.UserDto
-import exceptions.AlreadyTakenEmail
+import exceptions.AlreadyTakenField
 import scalikejdbc.sqls
 import skinny.orm.Alias
 import utils.HashPasswordUtil.hashPassword
@@ -13,12 +13,18 @@ class UserRepositoryMysqlImpl() extends UserRepository {
   val user: Alias[User] = UserDao.defaultAlias
 
   override def save(userDto: UserDto): UserId = {
-    val user = findByEmail(userDto.email.value)
-    println(user)
-    user match {
-      case Some(user) => throw AlreadyTakenEmail(s"${user.email.value} has been registered, please try again with a new one!!")
+    val userByName = findByName(userDto.name.getOrElse(""))
+    userByName match {
+      case Some(user) => throw AlreadyTakenField(s"Username already exists!")
       case _ =>
     }
+
+    val userByEmail = findByEmail(userDto.email.value)
+    userByEmail match {
+      case Some(user) => throw AlreadyTakenField(s"Email already exists!")
+      case _ =>
+    }
+
     UserDao.createWithAttributes(
       Symbol("name") -> userDto.name,
       Symbol("email") -> userDto.email.value,
@@ -28,6 +34,10 @@ class UserRepositoryMysqlImpl() extends UserRepository {
 
   override def findByEmail(email: String): Option[User] = {
     UserDao.findBy(sqls.eq(user.email, email))
+  }
+
+  override def findByName(name: String): Option[User] = {
+    UserDao.findBy(sqls.eq(user.name, name))
   }
 }
 

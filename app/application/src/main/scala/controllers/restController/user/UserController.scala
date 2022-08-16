@@ -2,7 +2,7 @@ package controllers.restController.user
 
 import domain.src.main.scala.services.user.UserService
 import dto.user.UserDto
-import exceptions.AlreadyTakenEmail
+import exceptions.AlreadyTakenField
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
 
@@ -21,7 +21,7 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
       case Success(_) => Created("success")
       case Failure(exception) =>
         exception match {
-          case error: AlreadyTakenEmail => Conflict(error.message)
+          case error: AlreadyTakenField => Conflict(error.message)
           case jsExcept: JsResultException => BadRequest(jsExcept.errors.head._2.head.message)
           case th: Throwable => {
             th.printStackTrace()

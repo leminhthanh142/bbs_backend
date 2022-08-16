@@ -6,5 +6,6 @@ import valueObject.UserId
 
 trait UserRepository {
   def findByEmail(email: String): Option[User]
+  def findByName(name: String): Option[User]
   def save(userDto: UserDto): UserId
 }
