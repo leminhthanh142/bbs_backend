@@ -8,10 +8,10 @@ import services.auth.AuthService
 import utils.jwt.JwtUtil.generateJwtToken
 import helper.jsonFormat.user.UserJsonFormat._
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.util.{Failure, Success, Try}
 
-
+@Singleton
 class AuthController @Inject()(val controllerComponents: ControllerComponents, authService: AuthService) extends BaseController {
   def signIn(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Try {
@@ -29,10 +29,7 @@ class AuthController @Inject()(val controllerComponents: ControllerComponents, a
           case _: PasswordNotMatch => Unauthorized("Password does not match")
           case _: EntityNotFound => Unauthorized("User not found")
           case jsExcept: JsResultException => BadRequest(jsExcept.errors.head._2.head.message)
-          case error: Exception => {
-            error.printStackTrace()
-            InternalServerError("Something went wrong, please try again later!!")
-          }
+          case _ => InternalServerError("Something went wrong, please try again later!!")
         }
     }
   }

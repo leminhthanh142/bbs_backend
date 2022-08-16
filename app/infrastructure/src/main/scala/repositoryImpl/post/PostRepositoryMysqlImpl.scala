@@ -3,6 +3,7 @@ import dao.post.PostDao
 import domain.src.main.scala.model.post.Post
 import domain.src.main.scala.repository.post.PostRepository
 import dto.post.{Paged, PostCreateParams}
+import exceptions.EntityNotFound
 import scalikejdbc.sqls
 import skinny.Pagination
 import skinny.orm.Alias
@@ -10,6 +11,7 @@ import valueObject.PostId
 
 class PostRepositoryMysqlImpl extends PostRepository {
   val post: Alias[Post] = PostDao.defaultAlias
+
   override def getAllPostWithPagination(page: Int, size: Int): Paged[Post] = {
     val postList: List[Post] = PostDao
       .where(sqls.isNull(post.deletedAt))
@@ -25,11 +27,10 @@ class PostRepositoryMysqlImpl extends PostRepository {
     )
   }
 
-  override def getPostCount: Long = {
-    PostDao.countBy(sqls.isNull(post.deletedAt))
+  override def getPostById(id: Int): Post = PostDao.findById(PostId(id)) match {
+    case Some(post) => post
+    case _ => throw new EntityNotFound
   }
-
-  override def getPostById(id: Int): Option[Post] = PostDao.findById(PostId(id))
 
   override def createPost(postCreateParams: PostCreateParams): PostId = {
     PostDao.createWithAttributes(

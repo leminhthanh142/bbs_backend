@@ -19,11 +19,11 @@ class CSVController @Inject()(
   def makeCsv(id: Int): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Try {
       val post = postService.getPostById(id)
-      csvService.makeCsv(post.get)
+      csvService.makeCsv(post)
     }
     match {
       case Failure(exception) => exception match {
-        case entityNotFound: EntityNotFound => NotFound(entityNotFound.message)
+        case _: EntityNotFound => NotFound("Can not find post")
         case _ => InternalServerError("Something went wrong, please try again later!")
       }
       case Success(value) => Ok.sendFile(value)

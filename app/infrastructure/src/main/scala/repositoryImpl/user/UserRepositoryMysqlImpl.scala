@@ -14,9 +14,8 @@ class UserRepositoryMysqlImpl() extends UserRepository {
 
   override def save(userDto: UserDto): UserId = {
     val user = findByEmail(userDto.email.value)
-    println(user)
     user match {
-      case Some(user) => throw AlreadyTakenEmail(s"${user.email.value} has been registered, please try again with a new one!!")
+      case Some(user) => throw AlreadyTakenEmail(s"Email has been taken, please try again with a new one!")
       case _ =>
     }
     UserDao.createWithAttributes(

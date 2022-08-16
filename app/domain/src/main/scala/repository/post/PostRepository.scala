@@ -6,7 +6,6 @@ import valueObject.PostId
 
 trait PostRepository {
   def getAllPostWithPagination(page: Int, size: Int): Paged[Post]
-  def getPostCount: Long
-  def getPostById(id: Int): Option[Post]
+  def getPostById(id: Int): Post
   def createPost(postCreateParams: PostCreateParams): PostId
 }

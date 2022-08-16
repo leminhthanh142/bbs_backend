@@ -12,9 +12,7 @@ import javax.inject.{Inject, Singleton}
 class PostServiceImpl @Inject()(postRepository: PostRepository) extends PostService {
   override def getAllPostWithPagination(page: Int, size: Int): Paged[Post] = postRepository.getAllPostWithPagination(page, size)
 
-  override def getPostCount: Long = postRepository.getPostCount
-
-  override def getPostById(id: Int): Option[Post] = postRepository.getPostById(id)
+  override def getPostById(id: Int): Post = postRepository.getPostById(id)
 
   override def createPost(postCreateParams: PostCreateParams): PostId = postRepository.createPost(postCreateParams)
 }

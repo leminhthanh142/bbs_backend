@@ -1,6 +1,6 @@
 package dto.post
 
-import dto.apiResult.MissingParameter
+import exceptions.MissingParameter
 
 case class PostCreateParams(
                            title: String,
@@ -9,6 +9,7 @@ case class PostCreateParams(
                            thumbnail: String
                            ) {
   if (title.isEmpty) throw MissingParameter("Title is required")
+  if (content.isEmpty) throw MissingParameter("Content is required")
   if (author.isEmpty) throw MissingParameter("Author name is required")
   if (thumbnail.isEmpty) throw MissingParameter("Thumbnail is required")
 }

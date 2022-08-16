@@ -1,8 +1,8 @@
 package controllers.restController.post
 
 import domain.src.main.scala.services.post.PostService
-import dto.apiResult.MissingParameter
 import dto.post.PostCreateParams
+import exceptions.{EntityNotFound, MissingParameter}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
 
@@ -25,7 +25,7 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
     }
     match {
       case Success(value) => Ok(Json.toJson(value))
-      case Failure(exception) => BadRequest(exception.toString)
+      case Failure(_) => InternalServerError("Something went wrong, please try again later!")
     }
   }
 
@@ -35,7 +35,10 @@ class PostController @Inject()(val controllerComponents: ControllerComponents, p
     }
     match {
       case Success(value) => Ok(Json.toJson(value))
-      case Failure(exception) => BadRequest(exception.toString)
+      case Failure(exception) => exception match {
+        case _: EntityNotFound => NotFound("Can not find post")
+        case _ => InternalServerError("Something went wrong, please try again later!")
+      }
     }
   }
 

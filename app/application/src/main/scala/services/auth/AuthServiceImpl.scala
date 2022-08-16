@@ -1,10 +1,9 @@
-package services
+package services.auth
 
 import domain.src.main.scala.model.user.User
 import domain.src.main.scala.repository.user.UserRepository
 import dto.user.UserDto
 import exceptions.{EntityNotFound, PasswordNotMatch}
-import services.auth.AuthService
 import utils.HashPasswordUtil.checkPassword
 
 import javax.inject.{Inject, Singleton}
